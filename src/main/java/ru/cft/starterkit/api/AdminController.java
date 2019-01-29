@@ -15,7 +15,7 @@ public class AdminController {
             consumes = "application/x-www-form-urlencoded",
             produces = "application/json"
     )
-    public Boolean addOffer (
+    public Boolean addBorrower (
             @RequestParam(name = "login") String login,
             @RequestParam(name = "password") String password){
         return true;

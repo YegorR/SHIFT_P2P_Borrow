@@ -22,7 +22,7 @@ public class Investor extends User{
         return offer;
     }
 
-    public void setOffer(){
+    public void setOffer(Offer offer){
         this.offer = offer;
     }
 }

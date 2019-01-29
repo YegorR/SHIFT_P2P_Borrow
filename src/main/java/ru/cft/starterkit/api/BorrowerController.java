@@ -15,7 +15,7 @@ public class BorrowerController {
             consumes = "application/x-www-form-urlencoded",
             produces = "application/json"
     )
-    public String addOffer (
+    public String ask(
             @RequestParam(name = "sum") Double sum,
             @RequestParam(name = "term") Integer term){
         return "You ask money";
