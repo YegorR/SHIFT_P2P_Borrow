@@ -32,7 +32,7 @@ public class PercentData {
         }
     }
 
-    private final static String FILENAME = "percent.txt";
+    private final static String FILENAME = "src/main/java/ru/cft/starterkit/data/percent.txt";
     private ArrayList<Row> rows = new ArrayList<>();
 
     private PercentData() throws IOException{
@@ -63,6 +63,10 @@ public class PercentData {
 
     //Singleton
     private static PercentData single = null;
+
+    public ArrayList<Row> getRows(){
+        return rows;
+    }
 
     public static PercentData getInstance() throws IOException{
         if (single==null)

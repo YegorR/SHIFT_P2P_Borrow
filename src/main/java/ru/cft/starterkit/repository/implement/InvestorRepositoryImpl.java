@@ -1,6 +1,6 @@
 package ru.cft.starterkit.repository.implement;
 
-import com.sun.tools.jdeps.InverseDepsAnalyzer;
+//import com.sun.tools.jdeps.InverseDepsAnalyzer;
 import org.springframework.stereotype.Repository;
 import ru.cft.starterkit.entity.Investor;
 import ru.cft.starterkit.exception.InvestorNotFoundException;
