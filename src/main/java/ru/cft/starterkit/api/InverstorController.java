@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.cft.starterkit.service.LogicService;
 
 @RestController
+@RequestMapping("/investor")
 public class InverstorController {
 
     /*private final LogicService logicService;
