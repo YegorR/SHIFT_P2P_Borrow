@@ -1,4 +1,4 @@
 package ru.cft.starterkit.entity;
 
-public class Server_offer {
+public class Borrower extends User {
 }
