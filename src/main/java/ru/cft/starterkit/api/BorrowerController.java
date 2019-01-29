@@ -9,4 +9,16 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/borrower")
 public class BorrowerController {
 
+
+    @RequestMapping(
+            method = RequestMethod.POST,
+            path = "/ask",
+            consumes = "application/x-www-form-urlencoded",
+            produces = "application/json"
+    )
+    public String addOffer (
+            @RequestParam(name = "sum") Double sum,
+            @RequestParam(name = "term") Integer term){
+        return "You ask money";
+    }
 }
