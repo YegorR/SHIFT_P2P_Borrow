@@ -7,7 +7,7 @@ import ru.cft.starterkit.service.LogicService;
 
 @RestController
 @RequestMapping("/investor")
-public class InverstorController {
+public class InvestorController {
 
     /*private final LogicService logicService;
 
