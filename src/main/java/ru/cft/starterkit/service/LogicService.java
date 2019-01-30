@@ -1,9 +1,6 @@
 package ru.cft.starterkit.service;
 
-import ru.cft.starterkit.entity.Borrower;
-import ru.cft.starterkit.entity.Investor;
-import ru.cft.starterkit.entity.Offer;
-import ru.cft.starterkit.entity.ServerOffer;
+import ru.cft.starterkit.entity.*;
 import ru.cft.starterkit.exception.BorrowerNotFoundException;
 import ru.cft.starterkit.exception.IncorrectSumException;
 import ru.cft.starterkit.exception.InvestorNotFoundException;
@@ -21,7 +18,7 @@ public interface LogicService {
     Investor getInvestor(String login) throws InvestorNotFoundException;
 
     ServerOffer createServerOffer(double sum, int term) ;
-    void createDeal(UUID id, Borrower borrower) throws ServerOfferNotFoundException;
+    Deal createDeal(UUID id, Borrower borrower) throws ServerOfferNotFoundException;
 
     //void payByBorrower(double sum);
     //double getBalanceBorrower(Borrower borrower);

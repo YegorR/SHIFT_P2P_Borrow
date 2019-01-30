@@ -21,7 +21,7 @@ public class InvestorController {
 
     private static final Logger log = LoggerFactory.getLogger(InvestorController.class);
 
-    private static  String TEST_LOGIN = "user1  ";
+    private static  String TEST_LOGIN = "user1";
 
 
     private final LogicService logicService;

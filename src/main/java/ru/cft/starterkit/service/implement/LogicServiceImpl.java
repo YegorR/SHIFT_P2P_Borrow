@@ -3,10 +3,7 @@ package ru.cft.starterkit.service.implement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.cft.starterkit.data.PercentData;
-import ru.cft.starterkit.entity.Borrower;
-import ru.cft.starterkit.entity.Investor;
-import ru.cft.starterkit.entity.Offer;
-import ru.cft.starterkit.entity.ServerOffer;
+import ru.cft.starterkit.entity.*;
 import ru.cft.starterkit.exception.BorrowerNotFoundException;
 import ru.cft.starterkit.exception.IncorrectSumException;
 import ru.cft.starterkit.exception.InvestorNotFoundException;
@@ -83,8 +80,11 @@ public class LogicServiceImpl implements LogicService{
     }
 
     @Override
-    public void createDeal(UUID id, Borrower borrower) throws ServerOfferNotFoundException {
-        serverOffersRepository.get(id);
-
+    public Deal createDeal(UUID id, Borrower borrower) throws ServerOfferNotFoundException {
+        ServerOffer serverOffer = serverOffersRepository.get(id);
+        Deal deal = new Deal(serverOffer);
+        borrower.setDeal(deal);
+        borrower.setBalance(borrower.getBalance() - serverOffer.getSum()*(1 + serverOffer.getPercent()));
+        return  deal;
     }
 }

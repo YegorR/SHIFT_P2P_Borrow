@@ -8,14 +8,16 @@ public class ServerOffer {
     private final double part;
     private final double percent;
     private final int term;
+    private final double sum;
 
     private final UUID id;
 
-    public ServerOffer(ArrayList<Investor> investors, double part, double percent, int term){
+    public ServerOffer(ArrayList<Investor> investors, double part, double percent, int term, double sum){
         this.investors = investors;
         this.part = part;
         this.percent = percent;
         this.term = term;
+        this.sum = sum;
 
         id = UUID.randomUUID();
     }
@@ -38,5 +40,9 @@ public class ServerOffer {
 
     public int getTerm(){
         return term;
+    }
+
+    public double getSum(){
+        return sum;
     }
 }
