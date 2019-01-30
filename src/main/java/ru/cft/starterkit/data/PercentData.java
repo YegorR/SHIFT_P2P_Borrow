@@ -1,6 +1,7 @@
 package ru.cft.starterkit.data;
 
-import java.io.FileNotFoundException;
+import ru.cft.starterkit.exception.IncorrectSumException;
+
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -66,6 +67,17 @@ public class PercentData {
 
     public ArrayList<Row> getRows(){
         return rows;
+    }
+
+    public double getPercent(double sum) throws IncorrectSumException {
+        Iterator<Row> iter = rows.iterator();
+        while(iter.hasNext()){
+            Row row = iter.next();
+            if ((row.getMin() <= sum) && (row.getMax() > sum)){
+                return row.getPercent();
+            }
+        }
+        throw new IncorrectSumException();
     }
 
     public static PercentData getInstance() throws IOException{

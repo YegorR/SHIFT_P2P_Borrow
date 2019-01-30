@@ -4,6 +4,9 @@ package ru.cft.starterkit.api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.cft.starterkit.data.PercentData;
+import ru.cft.starterkit.entity.Offer;
+import ru.cft.starterkit.exception.IncorrectSumException;
+import ru.cft.starterkit.exception.InvestorNotFoundException;
 import ru.cft.starterkit.service.LogicService;
 
 import org.slf4j.Logger;
@@ -18,13 +21,15 @@ public class InvestorController {
 
     private static final Logger log = LoggerFactory.getLogger(InvestorController.class);
 
+    private static  String TEST_LOGIN = "user1  ";
 
-    /*private final LogicService logicService;
+
+    private final LogicService logicService;
 
     @Autowired
-    public InverstorController (LogicService logicService){
+    public InvestorController (LogicService logicService){
         this.logicService = logicService;
-    }*/
+    }
 
     @RequestMapping(
             method = RequestMethod.POST,
@@ -32,9 +37,26 @@ public class InvestorController {
             consumes = "application/x-www-form-urlencoded",
             produces = "application/json"
     )
-    public String addOffer (
-            @RequestParam(name = "sum") Double sum){
-        return "OK";
+    public Offer addOffer (
+            @RequestParam(name = "sum") Double sum,
+            @RequestParam(name = "id") int id) throws InvestorNotFoundException, IOException, IncorrectSumException {
+        switch(id){
+            case 0:
+                TEST_LOGIN = "user0"; break;
+            case 1:
+                TEST_LOGIN = "user1"; break;
+            case 2:
+                TEST_LOGIN = "user2"; break;
+            case 3:
+                TEST_LOGIN = "user3"; break;
+            case 4:
+                TEST_LOGIN = "user4"; break;
+            case 5:
+                TEST_LOGIN = "user5"; break;
+            case 6:
+                TEST_LOGIN = "user6"; break;
+        }
+        return logicService.createOffer(sum, logicService.getInvestor(TEST_LOGIN));
     }
 
     @RequestMapping(
