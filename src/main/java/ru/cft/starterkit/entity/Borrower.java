@@ -15,4 +15,6 @@ public class Borrower extends User {
     public void setDeal(Deal deal) {
         this.deal = deal;
     }
+
+
 }

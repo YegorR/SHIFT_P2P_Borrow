@@ -4,22 +4,46 @@ import java.util.ArrayList;
 import java.util.UUID;
 
 public class ServerOffer {
+    public class ServerOfferForUser{
+        private final double percent;
+        private final int term;
+        private final double sum;
+        private final UUID id;
+
+        ServerOfferForUser(double percent, int term, double sum, UUID id){
+            this.percent = percent;
+            this.term = term;
+            this.sum = sum;
+            this.id = id;
+        }
+
+        public double getPercent() {
+            return percent;
+        }
+
+        public int getTerm() {
+            return term;
+        }
+
+        public double getSum() {
+            return sum;
+        }
+
+        public UUID getId() {
+            return id;
+        }
+    }
     private final ArrayList<Investor> investors;
     private final double part;
-    private final double percent;
-    private final int term;
-    private final double sum;
+    private final ServerOfferForUser serverOfferForUser;
 
-    private final UUID id;
+
 
     public ServerOffer(ArrayList<Investor> investors, double part, double percent, int term, double sum){
         this.investors = investors;
         this.part = part;
-        this.percent = percent;
-        this.term = term;
-        this.sum = sum;
+        this.serverOfferForUser = new ServerOfferForUser(percent, term, sum, UUID.randomUUID());
 
-        id = UUID.randomUUID();
     }
 
     public ArrayList<Investor> getInvestors() {
@@ -30,19 +54,23 @@ public class ServerOffer {
         return part;
     }
 
-    public double getPercent() {
-        return percent;
-    }
-
-    public UUID getId() {
-        return id;
-    }
-
-    public int getTerm(){
-        return term;
+    public ServerOfferForUser getServerOfferForUser(){
+        return serverOfferForUser;
     }
 
     public double getSum(){
-        return sum;
+        return serverOfferForUser.getSum();
+    }
+
+    public double getPercent(){
+        return serverOfferForUser.getPercent();
+    }
+
+    public UUID getId(){
+        return serverOfferForUser.getId();
+    }
+
+    public int getTerm(){
+        return serverOfferForUser.getTerm();
     }
 }

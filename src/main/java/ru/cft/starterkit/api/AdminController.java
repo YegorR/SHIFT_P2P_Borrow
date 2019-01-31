@@ -11,6 +11,8 @@ import ru.cft.starterkit.entity.Investor;
 import ru.cft.starterkit.entity.Offer;
 import ru.cft.starterkit.exception.BorrowerNotFoundException;
 import ru.cft.starterkit.exception.InvestorNotFoundException;
+import ru.cft.starterkit.repository.BorrowerRepository;
+import ru.cft.starterkit.repository.TimerRepository;
 import ru.cft.starterkit.service.LogicService;
 
 import java.util.ArrayList;
@@ -20,10 +22,16 @@ import java.util.ArrayList;
 public class AdminController {
 
     private LogicService logicService;
+    private BorrowerRepository borrowerRepository;
+    private TimerRepository timerRepository;
+    private static String TEST_LOGIN = "b1";
 
     @Autowired
-    public AdminController(LogicService logicService){
+    public AdminController(LogicService logicService, BorrowerRepository borrowerRepository,
+                           TimerRepository timerRepository){
         this.logicService = logicService;
+        this.borrowerRepository = borrowerRepository;
+        this.timerRepository = timerRepository;
     }
 
     @RequestMapping(
@@ -58,5 +66,18 @@ public class AdminController {
     )
     public ArrayList<Investor> showAllInvestors(){
         return logicService.showAllInvestors() ;
+    }
+
+    @RequestMapping(
+            method = RequestMethod.POST,
+            path = "/time",
+            consumes = "application/x-www-form-urlencoded",
+            produces = "application/json"
+    )
+    public double time(
+            @RequestParam(name = "expired") boolean expired
+    ) throws BorrowerNotFoundException{
+        logicService.timeOn(borrowerRepository.getBorrower(TEST_LOGIN));
+        return logicService.getBalanceBorrower(borrowerRepository.getBorrower(TEST_LOGIN));
     }
 }

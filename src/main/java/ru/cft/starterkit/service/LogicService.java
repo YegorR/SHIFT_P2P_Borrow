@@ -20,11 +20,13 @@ public interface LogicService {
     ServerOffer createServerOffer(double sum, int term) ;
     Deal createDeal(UUID id, Borrower borrower) throws ServerOfferNotFoundException;
 
-    //void payByBorrower(double sum);
-    //double getBalanceBorrower(Borrower borrower);
+    void payByBorrower(double sum, Borrower borrower);
+    double getBalanceBorrower(Borrower borrower);
     //int getTermBorrower(Borrower borrower);
 
     Offer createOffer(double sum, Investor investor) throws IOException, IncorrectSumException, InvestorNotFoundException;
+
+    void timeOn(Borrower borrower);
 
     //double getBalanceInvestor(Investor investor);
     //double getLoanInvestor(Investor investor);

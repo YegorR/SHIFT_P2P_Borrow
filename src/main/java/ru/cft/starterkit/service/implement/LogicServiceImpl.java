@@ -8,14 +8,11 @@ import ru.cft.starterkit.exception.BorrowerNotFoundException;
 import ru.cft.starterkit.exception.IncorrectSumException;
 import ru.cft.starterkit.exception.InvestorNotFoundException;
 import ru.cft.starterkit.exception.ServerOfferNotFoundException;
-import ru.cft.starterkit.repository.BorrowerRepository;
-import ru.cft.starterkit.repository.InvestorRepository;
-import ru.cft.starterkit.repository.ServerOffersRepository;
+import ru.cft.starterkit.repository.*;
 import ru.cft.starterkit.service.LogicService;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class LogicServiceImpl implements LogicService{
@@ -23,23 +20,31 @@ public class LogicServiceImpl implements LogicService{
     private final InvestorRepository investorRepository;
     private final ServerOffersRepository serverOffersRepository;
     private final BorrowerRepository borrowerRepository;
+    private final TimerRepository timerRepository;
+    private final UserRepositiry userRepositiry;
 
     @Autowired
-    public LogicServiceImpl(InvestorRepository investorRepository, ServerOffersRepository serverOffersRepository, BorrowerRepository borrowerRepository){
+    public LogicServiceImpl(InvestorRepository investorRepository, ServerOffersRepository serverOffersRepository,
+                            BorrowerRepository borrowerRepository, TimerRepository timer,
+                            UserRepositiry userRepositiry){
         this.investorRepository = investorRepository;
         this.serverOffersRepository = serverOffersRepository;
         this.borrowerRepository = borrowerRepository;
+        timerRepository = timer;
+        this.userRepositiry = userRepositiry;
     }
 
     @Override
     public Investor createInvestor(String login, String password) throws InvestorNotFoundException {
         investorRepository.add(new Investor(login, password));
+        userRepositiry.addUser(investorRepository.get(login));
         return investorRepository.get(login);
     }
 
     @Override
     public Borrower createBorrower(String login, String password) throws BorrowerNotFoundException{
         borrowerRepository.addBorrower(new Borrower(login, password));
+        userRepositiry.addUser(borrowerRepository.getBorrower(login));
         return borrowerRepository.getBorrower(login);
     }
 
@@ -84,7 +89,62 @@ public class LogicServiceImpl implements LogicService{
         ServerOffer serverOffer = serverOffersRepository.get(id);
         Deal deal = new Deal(serverOffer);
         borrower.setDeal(deal);
-        borrower.setBalance(borrower.getBalance() - serverOffer.getSum()*(1 + serverOffer.getPercent()));
+        borrower.setBalance(borrower.getBalance() - serverOffer.getSum()*(1 + 0.01 * serverOffer.getPercent()));
+        timerRepository.createTask(borrower);
+        Iterator<Investor> iter = serverOffer.getInvestors().iterator();
+        while(iter.hasNext()){
+            Investor investor = iter.next();
+            investor.setBalance(investor.getBalance() - serverOffer.getPart());
+        }
         return  deal;
+    }
+
+    @Override
+    public void timeOn(Borrower borrower){
+        Deal deal = borrower.getDeal();
+        if (deal == null) return;   //Удалить таск
+        ServerOffer serverOffer = deal.getServerOffer();
+        if (serverOffer == null) return;    //Удалить таск и deal
+
+        borrower.setBalance(borrower.getBalance() * (1 + 0.01 *serverOffer.getPercent()));
+
+    }
+
+    @Override
+    public double getBalanceBorrower(Borrower borrower){
+        return borrower.getBalance();
+    }
+
+    @Override
+    public void payByBorrower(double sum, Borrower borrower){
+        sum *= 0.90;   //Коммисия
+
+        if (borrower.getBalance() >= 0){
+            borrower.setBalance(borrower.getBalance() + sum);
+            return;
+        }
+
+        if (borrower.getBalance() + sum >= 0){
+            double temp = borrower.getBalance() * (-1);
+            borrower.setBalance(borrower.getBalance() + sum);
+            sum = temp;
+        }
+        else{
+            borrower.setBalance(borrower.getBalance() + sum);
+        }
+        ServerOffer serverOffer = borrower.getDeal().getServerOffer();
+        List<Investor> investors = serverOffer.getInvestors();
+        Iterator<Investor> iter = investors.iterator();
+
+
+        while(iter.hasNext()){
+            Investor inv = iter.next();
+            inv.setBalance(inv.getBalance()+sum / investors.size());
+        }
+        if (borrower.getBalance() >= 0){
+            timerRepository.removeTask(borrower);
+            borrower.setDeal(null);
+        }
+
     }
 }

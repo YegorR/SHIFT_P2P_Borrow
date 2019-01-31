@@ -2,7 +2,7 @@ package ru.cft.starterkit.entity;
 
 import java.util.Objects;
 
-public class User {
+public abstract class User {
     private String login;
     private String password;
     private double balance;

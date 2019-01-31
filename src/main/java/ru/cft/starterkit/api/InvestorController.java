@@ -2,33 +2,31 @@ package ru.cft.starterkit.api;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import ru.cft.starterkit.data.PercentData;
+import org.springframework.web.server.ResponseStatusException;
+import ru.cft.starterkit.entity.Investor;
 import ru.cft.starterkit.entity.Offer;
 import ru.cft.starterkit.exception.IncorrectSumException;
 import ru.cft.starterkit.exception.InvestorNotFoundException;
+import ru.cft.starterkit.service.AuthenticationService;
 import ru.cft.starterkit.service.LogicService;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/investor")
 public class InvestorController {
 
-    private static final Logger log = LoggerFactory.getLogger(InvestorController.class);
-
-    private static  String TEST_LOGIN = "user1";
-
-
     private final LogicService logicService;
+    private final AuthenticationService authenticationService;
 
     @Autowired
-    public InvestorController (LogicService logicService){
+    public InvestorController (LogicService logicService, AuthenticationService authenticationService){
         this.logicService = logicService;
+        this.authenticationService = authenticationService;
     }
 
     @RequestMapping(
@@ -39,24 +37,14 @@ public class InvestorController {
     )
     public Offer addOffer (
             @RequestParam(name = "sum") Double sum,
-            @RequestParam(name = "id") int id) throws InvestorNotFoundException, IOException, IncorrectSumException {
-        switch(id){
-            case 0:
-                TEST_LOGIN = "user0"; break;
-            case 1:
-                TEST_LOGIN = "user1"; break;
-            case 2:
-                TEST_LOGIN = "user2"; break;
-            case 3:
-                TEST_LOGIN = "user3"; break;
-            case 4:
-                TEST_LOGIN = "user4"; break;
-            case 5:
-                TEST_LOGIN = "user5"; break;
-            case 6:
-                TEST_LOGIN = "user6"; break;
+            @RequestParam(name = "id") UUID id) throws IOException, IncorrectSumException {
+        try{
+            Investor investor = authenticationService.getInvestor(id);
+            return logicService.createOffer(sum, investor);
         }
-        return logicService.createOffer(sum, logicService.getInvestor(TEST_LOGIN));
+        catch(InvestorNotFoundException e){
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, e.getMessage(), e);
+        }
     }
 
     @RequestMapping(
@@ -64,11 +52,20 @@ public class InvestorController {
             path = "/balance",
             produces = "application/json"
     )
-    public String getBalance(){
-        return "Balance";
+    public double getBalance(
+            @RequestParam(name = "id") UUID id
+    ){
+
+        try{
+            Investor investor = authenticationService.getInvestor(id);
+            return investor.getBalance();
+        }
+        catch(InvestorNotFoundException e){
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, e.getMessage(), e);
+        }
     }
 
-    @RequestMapping(
+    /*@RequestMapping(
             method = RequestMethod.GET,
             path = "/percent_list",
             produces = "application/json"
@@ -82,5 +79,5 @@ public class InvestorController {
             log.error("Failed to read percent data: {}", e.getMessage());
             throw e;
         }
-    }
+    }*/
 }
