@@ -1,5 +1,7 @@
 package ru.cft.starterkit.api;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,7 +13,7 @@ import ru.cft.starterkit.entity.Borrower;
 import ru.cft.starterkit.entity.ServerOffer;
 import ru.cft.starterkit.exception.BorrowerNotFoundException;
 import ru.cft.starterkit.exception.ServerOfferNotFoundException;
-import ru.cft.starterkit.repository.BorrowerRepository;
+import ru.cft.starterkit.repository.implement.SampleEntityRepositoryImpl;
 import ru.cft.starterkit.service.AuthenticationService;
 import ru.cft.starterkit.service.LogicService;
 
@@ -22,14 +24,14 @@ import java.util.UUID;
 public class BorrowerController {
 
     private final LogicService logicService;
-    private final BorrowerRepository borrowerRepository;
     private final AuthenticationService authenticationService;
 
+    private static final Logger log = LoggerFactory.getLogger(BorrowerController.class);
+
+
     @Autowired
-    public BorrowerController(LogicService logicService, BorrowerRepository borrowerRepository,
-                              AuthenticationService authenticationService){
+    public BorrowerController(LogicService logicService, AuthenticationService authenticationService){
         this.logicService = logicService;
-        this.borrowerRepository = borrowerRepository;
         this.authenticationService = authenticationService;
     }
 
@@ -44,6 +46,7 @@ public class BorrowerController {
             @RequestParam(name = "term") Integer term,
             @RequestParam(name = "id") UUID id){
         try {
+            log.info("Запрос: POST borrower/ask sum={}, term={}, id={}", sum, term, id);
             authenticationService.getBorrower(id);
         }
         catch(BorrowerNotFoundException e){
@@ -65,6 +68,7 @@ public class BorrowerController {
             @RequestParam(name = "server_offer_id") UUID server_offer_id,
             @RequestParam(name = "id") UUID id) throws ServerOfferNotFoundException {
         try {
+            log.info("Запрос: POST borrower/ok server_offer_id={},  id={}", server_offer_id, id);
             Borrower borrower = authenticationService.getBorrower(id);
             logicService.createDeal(server_offer_id, borrower);
         }
@@ -80,8 +84,9 @@ public class BorrowerController {
             produces = "application/json"
     )
     public double balance (
-            @RequestParam(name = "id") UUID id) throws BorrowerNotFoundException{
+            @RequestParam(name = "id") UUID id){
         try {
+            log.info("Запрос: GET borrower/balance ,  id={}", id);
             Borrower borrower = authenticationService.getBorrower(id);
             return borrower.getBalance();
         }
@@ -100,6 +105,7 @@ public class BorrowerController {
             @RequestParam(name = "sum") double sum,
             @RequestParam(name = "id") UUID id){
         try {
+            log.info("Запрос: POST borrower/pay sum={},  id={}", sum, id);
             Borrower borrower = authenticationService.getBorrower(id);
             logicService.payByBorrower(sum, borrower);
             return borrower.getBalance();

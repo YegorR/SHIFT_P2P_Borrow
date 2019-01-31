@@ -1,6 +1,8 @@
 package ru.cft.starterkit.api;
 
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +25,8 @@ public class InvestorController {
     private final LogicService logicService;
     private final AuthenticationService authenticationService;
 
+    private static final Logger log = LoggerFactory.getLogger(InvestorController.class);
+
     @Autowired
     public InvestorController (LogicService logicService, AuthenticationService authenticationService){
         this.logicService = logicService;
@@ -39,6 +43,7 @@ public class InvestorController {
             @RequestParam(name = "sum") Double sum,
             @RequestParam(name = "id") UUID id) throws IOException, IncorrectSumException {
         try{
+            log.info("Запрос: POST investor/offer sum={}, id={}", sum, id);
             Investor investor = authenticationService.getInvestor(id);
             return logicService.createOffer(sum, investor);
         }
@@ -57,6 +62,7 @@ public class InvestorController {
     ){
 
         try{
+            log.info("Запрос: GET investor/balance id={}", id);
             Investor investor = authenticationService.getInvestor(id);
             return investor.getBalance();
         }
@@ -64,20 +70,4 @@ public class InvestorController {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, e.getMessage(), e);
         }
     }
-
-    /*@RequestMapping(
-            method = RequestMethod.GET,
-            path = "/percent_list",
-            produces = "application/json"
-    )
-    public ArrayList<PercentData.Row> getPercentList() throws IOException{
-        try{
-            PercentData pd = PercentData.getInstance();
-            return pd.getRows();
-        }
-        catch (IOException e){
-            log.error("Failed to read percent data: {}", e.getMessage());
-            throw e;
-        }
-    }*/
 }

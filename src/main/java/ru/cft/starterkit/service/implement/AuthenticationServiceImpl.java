@@ -14,13 +14,13 @@ import ru.cft.starterkit.service.AuthenticationService;
 import java.util.UUID;
 
 @Service
-public class AuthenticationSerivceImpl implements AuthenticationService {
+public class AuthenticationServiceImpl implements AuthenticationService {
     private final UserRepositiry userRepositiry;
     private final InvestorRepository investorRepository;
     private final BorrowerRepository borrowerRepository;
 
     @Autowired
-    public AuthenticationSerivceImpl(UserRepositiry userRepositiry, InvestorRepository investorRepository,
+    public AuthenticationServiceImpl(UserRepositiry userRepositiry, InvestorRepository investorRepository,
                                      BorrowerRepository borrowerRepository){
         this.userRepositiry = userRepositiry;
         this.investorRepository = investorRepository;

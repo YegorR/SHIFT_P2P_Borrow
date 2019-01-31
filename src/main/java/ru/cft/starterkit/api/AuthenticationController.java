@@ -1,6 +1,8 @@
 package ru.cft.starterkit.api;
 
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,6 +17,7 @@ import ru.cft.starterkit.exception.InvestorNotFoundException;
 import ru.cft.starterkit.repository.BorrowerRepository;
 import ru.cft.starterkit.repository.InvestorRepository;
 import ru.cft.starterkit.repository.TimerRepository;
+import ru.cft.starterkit.repository.implement.SampleEntityRepositoryImpl;
 import ru.cft.starterkit.service.AuthenticationService;
 import ru.cft.starterkit.service.LogicService;
 
@@ -25,14 +28,12 @@ import java.util.UUID;
 @RequestMapping("/login")
 public class AuthenticationController {
 
+    private static final Logger log = LoggerFactory.getLogger(AuthenticationController.class);
     private AuthenticationService authenticationService;
-    private BorrowerRepository borrowerRepository;
-    private InvestorRepository investorRepository;
 
     @Autowired
-    public AuthenticationController(AuthenticationService authenticationService, BorrowerRepository borrowerRepository){
+    public AuthenticationController(AuthenticationService authenticationService){
         this.authenticationService = authenticationService;
-        this.borrowerRepository = borrowerRepository;
     }
 
     @RequestMapping(
@@ -44,8 +45,9 @@ public class AuthenticationController {
     public UUID login(
             @RequestParam(name = "login") String login,
             @RequestParam(name = "password") String password,
-            @RequestParam(name = "investor") boolean investor)  throws InvestorNotFoundException {
+            @RequestParam(name = "investor") boolean investor){
         try {
+            log.info("Аутентификация: login={}, password={}, investor={}", login, password, investor);
             return authenticationService.login(login, password, investor);
         }
         catch (BorrowerNotFoundException|InvestorNotFoundException e ){
