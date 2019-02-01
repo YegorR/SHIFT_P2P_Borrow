@@ -124,6 +124,7 @@ public class LogicServiceImpl implements LogicService{
 
     @Override
     public void payByBorrower(double sum, Borrower borrower){
+        if (sum <= 0) return;
         sum *= 0.90;   //Коммисия
 
         if (borrower.getBalance() >= 0){
@@ -157,6 +158,7 @@ public class LogicServiceImpl implements LogicService{
 
     @Override
     public void payByInvestor(double sum, Investor investor){
+        if (sum <= 0) return;
         investor.setBalance(investor.getBalance()+sum);
     }
 }
