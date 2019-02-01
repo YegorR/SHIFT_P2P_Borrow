@@ -10,15 +10,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.cft.starterkit.entity.Borrower;
 import ru.cft.starterkit.entity.Investor;
-import ru.cft.starterkit.entity.Offer;
 import ru.cft.starterkit.exception.BorrowerNotFoundException;
 import ru.cft.starterkit.exception.InvestorNotFoundException;
 import ru.cft.starterkit.repository.BorrowerRepository;
 import ru.cft.starterkit.repository.TimerRepository;
-import ru.cft.starterkit.repository.implement.SampleEntityRepositoryImpl;
+import ru.cft.starterkit.service.AuthenticationService;
 import ru.cft.starterkit.service.LogicService;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/admin")
@@ -29,14 +29,16 @@ public class AdminController {
     private LogicService logicService;
     private BorrowerRepository borrowerRepository;
     private TimerRepository timerRepository;
-    private static String TEST_LOGIN = "b1";
+    private AuthenticationService authenticationService;
+    //private static String TEST_LOGIN = "b1";
 
     @Autowired
     public AdminController(LogicService logicService, BorrowerRepository borrowerRepository,
-                           TimerRepository timerRepository){
+                           TimerRepository timerRepository, AuthenticationService authenticationService){
         this.logicService = logicService;
         this.borrowerRepository = borrowerRepository;
         this.timerRepository = timerRepository;
+        this.authenticationService = authenticationService;
     }
 
     @RequestMapping(
@@ -83,10 +85,11 @@ public class AdminController {
             produces = "application/json"
     )
     public double time(
-            @RequestParam(name = "expired") boolean expired
+            @RequestParam(name = "expired") boolean expired,
+            @RequestParam(name = "id") UUID uuid
     ) throws BorrowerNotFoundException{
         log.info("Запрос: POST admin/time expired={}", expired);
-        logicService.timeOn(borrowerRepository.getBorrower(TEST_LOGIN));
-        return logicService.getBalanceBorrower(borrowerRepository.getBorrower(TEST_LOGIN));
+        logicService.timeOn(authenticationService.getBorrower(uuid));
+        return logicService.getBalanceBorrower(authenticationService.getBorrower(uuid));
     }
 }
