@@ -85,18 +85,26 @@ public class LogicServiceImpl implements LogicService{
     }
 
     @Override
-    public Deal createDeal(UUID id, Borrower borrower) throws ServerOfferNotFoundException {
+    public boolean createDeal(UUID id, Borrower borrower) throws ServerOfferNotFoundException {
         ServerOffer serverOffer = serverOffersRepository.get(id);
+        Iterator<Investor> iter = serverOffer.getInvestors().iterator();
+        while(iter.hasNext()){
+            Investor investor = iter.next();
+            if (investor.getBalance() < serverOffer.getPart()){
+                return false;
+            }
+        }
+
         Deal deal = new Deal(serverOffer);
         borrower.setDeal(deal);
         borrower.setBalance(borrower.getBalance() - serverOffer.getSum()*(1 + 0.01 * serverOffer.getPercent()));
         timerRepository.createTask(borrower);
-        Iterator<Investor> iter = serverOffer.getInvestors().iterator();
+        iter = serverOffer.getInvestors().iterator();
         while(iter.hasNext()){
             Investor investor = iter.next();
             investor.setBalance(investor.getBalance() - serverOffer.getPart());
         }
-        return  deal;
+        return  true;
     }
 
     @Override

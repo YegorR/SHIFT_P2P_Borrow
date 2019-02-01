@@ -18,7 +18,7 @@ public interface LogicService {
     Investor getInvestor(String login) throws InvestorNotFoundException;
 
     ServerOffer createServerOffer(double sum, int term) ;
-    Deal createDeal(UUID id, Borrower borrower) throws ServerOfferNotFoundException;
+    boolean createDeal(UUID id, Borrower borrower) throws ServerOfferNotFoundException;
 
     void payByBorrower(double sum, Borrower borrower);
     void payByInvestor(double sum, Investor investor);
