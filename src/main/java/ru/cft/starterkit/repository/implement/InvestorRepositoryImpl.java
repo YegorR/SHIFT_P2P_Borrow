@@ -76,7 +76,8 @@ public class InvestorRepositoryImpl implements InvestorRepository {
                 canditats.add(inv);
                 double part = sum / canditats.size();
                 for(int i=0; i<canditats.size(); ++i){
-                    if(canditats.get(i).getOffer().getSum()<part) continue L;
+                    if((canditats.get(i).getOffer().getSum() < part) || (canditats.get(i).getBalance() < part))
+                        continue L;
                 }
                 return new ServerOffer(canditats, part, percent, term, sum);
             }
