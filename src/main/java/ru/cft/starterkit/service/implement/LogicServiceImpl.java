@@ -63,7 +63,6 @@ public class LogicServiceImpl implements LogicService{
         PercentData pd = PercentData.getInstance();
         double percent = pd.getPercent(sum);
         investor.setOffer(new Offer(sum, percent));
-        investor.setBalance(investor.getBalance() + sum);
         investorRepository.toGroup(investor.getLogin());
         return investor.getOffer();
     }
