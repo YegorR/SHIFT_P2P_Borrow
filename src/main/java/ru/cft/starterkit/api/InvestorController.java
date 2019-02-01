@@ -39,17 +39,21 @@ public class InvestorController {
             consumes = "application/x-www-form-urlencoded",
             produces = "application/json"
     )
-    public Offer addOffer (
+    public Response addOffer (
             @RequestParam(name = "sum") Double sum,
             @RequestParam(name = "id") UUID id) throws IOException, IncorrectSumException {
+        Response response;
         try{
             log.info("Запрос: POST investor/offer sum={}, id={}", sum, id);
             Investor investor = authenticationService.getInvestor(id);
-            return logicService.createOffer(sum, investor);
+
+            response = new Response(true,  logicService.createOffer(sum, investor), 200, "OK");
         }
         catch(InvestorNotFoundException e){
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, e.getMessage(), e);
+            //throw new ResponseStatusException(HttpStatus.FORBIDDEN, e.getMessage(), e);
+            response = new Response(false, null, 403, "Forbidden");
         }
+        return response;
     }
 
     @RequestMapping(
@@ -57,18 +61,20 @@ public class InvestorController {
             path = "/balance",
             produces = "application/json"
     )
-    public double getBalance(
+    public Response getBalance(
             @RequestParam(name = "id") UUID id
     ){
-
+        Response response;
         try{
             log.info("Запрос: GET investor/balance id={}", id);
             Investor investor = authenticationService.getInvestor(id);
-            return investor.getBalance();
+            response = new Response(true, investor.getBalance(), 200, "OK");
         }
         catch(InvestorNotFoundException e){
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, e.getMessage(), e);
+            //throw new ResponseStatusException(HttpStatus.FORBIDDEN, e.getMessage(), e);
+            response = new Response(false, null, 403, "Forbidden");
         }
+        return response;
     }
 
     @RequestMapping(
@@ -77,17 +83,20 @@ public class InvestorController {
             consumes = "application/x-www-form-urlencoded",
             produces = "application/json"
     )
-    public double pay (
+    public Response pay (
             @RequestParam(name = "sum") double sum,
             @RequestParam(name = "id") UUID id){
+        Response response;
         try {
             log.info("Запрос: POST borrower/pay sum={},  id={}", sum, id);
             Investor investor = authenticationService.getInvestor(id);
             logicService.payByInvestor(sum, investor);
-            return investor.getBalance();
+            response =  new Response(true, investor.getBalance(), 200, "OK");
         }
         catch(InvestorNotFoundException e){
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, e.getMessage(), e);
+            //throw new ResponseStatusException(HttpStatus.FORBIDDEN, e.getMessage(), e);
+            response = new Response(false, null, 403, "Forbidden");
         }
+        return response;
     }
 }
