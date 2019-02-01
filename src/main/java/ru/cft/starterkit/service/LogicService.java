@@ -21,6 +21,7 @@ public interface LogicService {
     Deal createDeal(UUID id, Borrower borrower) throws ServerOfferNotFoundException;
 
     void payByBorrower(double sum, Borrower borrower);
+    void payByInvestor(double sum, Investor investor);
     double getBalanceBorrower(Borrower borrower);
     //int getTermBorrower(Borrower borrower);
 

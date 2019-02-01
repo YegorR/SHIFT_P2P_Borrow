@@ -70,4 +70,24 @@ public class InvestorController {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, e.getMessage(), e);
         }
     }
+
+    @RequestMapping(
+            method = RequestMethod.POST,
+            path = "/pay",
+            consumes = "application/x-www-form-urlencoded",
+            produces = "application/json"
+    )
+    public double pay (
+            @RequestParam(name = "sum") double sum,
+            @RequestParam(name = "id") UUID id){
+        try {
+            log.info("Запрос: POST borrower/pay sum={},  id={}", sum, id);
+            Investor investor = authenticationService.getInvestor(id);
+            logicService.payByInvestor(sum, investor);
+            return investor.getBalance();
+        }
+        catch(InvestorNotFoundException e){
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, e.getMessage(), e);
+        }
+    }
 }

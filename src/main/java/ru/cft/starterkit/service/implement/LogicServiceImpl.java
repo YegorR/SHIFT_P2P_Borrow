@@ -147,4 +147,9 @@ public class LogicServiceImpl implements LogicService{
         }
 
     }
+
+    @Override
+    public void payByInvestor(double sum, Investor investor){
+        investor.setBalance(investor.getBalance()+sum);
+    }
 }
