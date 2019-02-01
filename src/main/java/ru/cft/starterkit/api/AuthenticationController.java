@@ -36,7 +36,7 @@ public class AuthenticationController {
         this.authenticationService = authenticationService;
     }
 
-    @RequestMapping(
+    /*@RequestMapping(
             method = RequestMethod.POST,
             path = "",
             consumes = "application/x-www-form-urlencoded",
@@ -54,7 +54,25 @@ public class AuthenticationController {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, e.getMessage(), e);
         }
 
+    }*/
+    @RequestMapping(
+            method = RequestMethod.POST,
+            path = "",
+            consumes = "application/x-www-form-urlencoded",
+            produces = "application/json"
+    )
+    public Response login(
+            @RequestParam(name = "login") String login,
+            @RequestParam(name = "password") String password,
+            @RequestParam(name = "investor") boolean investor) {
+        Response response;
+        try {
+            log.info("Аутентификация: login={}, password={}, investor={}", login, password, investor);
+            UUID uuid = authenticationService.login(login, password, investor);
+            response = new Response(true, uuid, 200, "OK");
+        } catch (BorrowerNotFoundException | InvestorNotFoundException e) {
+            response = new Response(false, null, 401, "Unauthorized");
+        }
+        return response;
     }
-
-
 }
