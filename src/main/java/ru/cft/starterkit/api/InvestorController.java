@@ -85,7 +85,7 @@ public class InvestorController {
             @RequestParam(name = "id") UUID id){
         Response response;
         try {
-            log.info("Запрос: POST borrower/pay sum={},  id={}", sum, id);
+            log.info("Запрос: POST investor/pay sum={},  id={}", sum, id);
             Investor investor = authenticationService.getInvestor(id);
             logicService.payByInvestor(sum, investor);
             response =  new Response(true, investor.getBalance(), 200, "OK");
